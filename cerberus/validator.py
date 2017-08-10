@@ -21,7 +21,7 @@ from cerberus import errors
 from cerberus.platform import _int_types, _str_type
 from cerberus.schema import (schema_registry, rules_set_registry,
                              DefinitionSchema, SchemaError)
-from cerberus.utils import drop_item_from_tuple, isclass
+from cerberus.utils import drop_item_from_tuple, isclass, normalize_schema
 
 
 toy_error_handler = errors.ToyErrorHandler()
@@ -139,6 +139,7 @@ class Validator(object):
             :meth:`~cerberus.Validator._error`.
             Type: :class:`~cerberus.errors.BaseErrorHandler` """
         self.__store_config(args, kwargs)
+        normalize_schema(kwargs.get('schema', {}))
         self.schema = kwargs.get('schema', None)
         self.allow_unknown = kwargs.get('allow_unknown', False)
         self._remaining_rules = []
@@ -1368,3 +1369,4 @@ class InspectedValidator(type):
 
 
 Validator = InspectedValidator('Validator', (Validator,), {})
+

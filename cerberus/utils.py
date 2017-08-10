@@ -4,6 +4,21 @@ from collections import Mapping, Sequence
 
 from cerberus.platform import _int_types, _str_type
 
+def normalize_schema(schema):
+    if not isinstance(schema, dict):
+        return schema
+    for key, value in schema.iteritems():
+        if key == 'coerce':
+            try:
+                schema[key] = eval(value)
+            except (NameError, TypeError):
+                pass
+        elif isinstance(value, dict):
+            normalize_schema(value)
+        elif isinstance(value, list):
+            for val in value:
+                if isinstance(value, dict):
+                    normalize_schema(val)
 
 def compare_paths_lt(x, y):
     for i in range(min(len(x), len(y))):
